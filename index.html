@@ -254,14 +254,87 @@ Müziğin ritmini Giresun FM ile yaşayın.
 <div class="bar"></div>
 </div>
 
+<!-- PLAYER -->
+
 <div class="player">
 
-<audio controls autoplay>
+<audio id="radioPlayer" controls autoplay>
 <source src="https://sslyayin.netyayin.net/2828/stream" type="audio/mpeg">
 Tarayıcınız audio oynatmayı desteklemiyor.
 </audio>
 
+<div class="now-playing">
+🎵 Yayındaki Eser:
+<span id="songTitle">Yükleniyor...</span>
 </div>
+
+</div>
+
+<style>
+
+.now-playing{
+    margin-top:20px;
+    padding:15px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.08);
+    font-size:16px;
+    color:#fff;
+    font-weight:500;
+    box-shadow:0 0 15px rgba(255,0,0,0.15);
+}
+
+#songTitle{
+    color:#ff4040;
+    font-weight:700;
+}
+
+</style>
+
+<script>
+
+/*
+  NETYAYIN ICECAST TITLE ÇEKME
+*/
+
+async function getNowPlaying() {
+
+    try {
+
+        const response = await fetch(
+            'https://sslyayin.netyayin.net/2828/status-json.xsl'
+        );
+
+        const data = await response.json();
+
+        const source = data.icestats.source;
+
+        let title = '';
+
+        if (Array.isArray(source)) {
+            title = source[0].title;
+        } else {
+            title = source.title;
+        }
+
+        document.getElementById('songTitle').innerText =
+            title || 'Şu anda eser bilgisi yok';
+
+    } catch (error) {
+
+        document.getElementById('songTitle').innerText =
+            'Eser bilgisi alınamadı';
+
+        console.log(error);
+    }
+}
+
+/* SAYFA AÇILINCA */
+getNowPlaying();
+
+/* HER 15 SANİYEDE GÜNCELLE */
+setInterval(getNowPlaying, 15000);
+
+</script>
 
 <div class="info">
 
