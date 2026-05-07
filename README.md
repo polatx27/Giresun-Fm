@@ -1,1 +1,1 @@
-# Polat-Medya
+# Giresun Fm
