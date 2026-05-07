@@ -259,13 +259,13 @@ Müziğin ritmini Giresun FM ile yaşayın.
 <div class="player">
 
 <audio id="radioPlayer" controls autoplay>
-<source src="https://sslyayin.netyayin.net/2828/stream" type="audio/mpeg">
-Tarayıcınız audio oynatmayı desteklemiyor.
+    <source src="https://sslyayin.netyayin.net/2828/stream" type="audio/mpeg">
+    Tarayıcınız audio oynatmayı desteklemiyor.
 </audio>
 
 <div class="now-playing">
-🎵 Yayındaki Eser:
-<span id="songTitle">Yükleniyor...</span>
+    🎵 Yayındaki Eser:
+    <span id="songTitle">Yükleniyor...</span>
 </div>
 
 </div>
@@ -293,38 +293,49 @@ Tarayıcınız audio oynatmayı desteklemiyor.
 <script>
 
 /*
-  NETYAYIN ICECAST TITLE ÇEKME
+  NETYAYIN PLAYING NOW ÇEKME
 */
 
 async function getNowPlaying() {
 
     try {
 
-        const response = await fetch(
-            'https://sslyayin.netyayin.net/2828/status-json.xsl'
-        );
+        const proxy =
+            "https://api.allorigins.win/raw?url=";
 
-        const data = await response.json();
+        const target =
+            encodeURIComponent(
+                "http://yayin.netyayin.net:2828/index.html?sid=1"
+            );
 
-        const source = data.icestats.source;
+        const response = await fetch(proxy + target);
 
-        let title = '';
+        const html = await response.text();
 
-        if (Array.isArray(source)) {
-            title = source[0].title;
-        } else {
-            title = source.title;
+        /*
+          Playing Now:
+          kısmını regex ile çekiyoruz
+        */
+
+        const match = html.match(/Playing Now:\s*<\/font>\s*(.*?)\s*<br>/i);
+
+        let title = "Şu anda eser bilgisi yok";
+
+        if(match && match[1]){
+
+            title = match[1]
+                .replace(/<[^>]*>/g, '')
+                .trim();
         }
 
-        document.getElementById('songTitle').innerText =
-            title || 'Şu anda eser bilgisi yok';
+        document.getElementById("songTitle").innerText = title;
 
-    } catch (error) {
-
-        document.getElementById('songTitle').innerText =
-            'Eser bilgisi alınamadı';
+    } catch(error){
 
         console.log(error);
+
+        document.getElementById("songTitle").innerText =
+            "Eser bilgisi alınamadı";
     }
 }
 
