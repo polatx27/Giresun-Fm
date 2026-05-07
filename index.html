@@ -254,97 +254,76 @@ Müziğin ritmini Giresun FM ile yaşayın.
 <div class="bar"></div>
 </div>
 
-<!-- PLAYER -->
-
-<div class="player">
-
-<audio id="radioPlayer" controls autoplay>
-    <source src="https://sslyayin.netyayin.net/2828/stream" type="audio/mpeg">
-    Tarayıcınız audio oynatmayı desteklemiyor.
-</audio>
-
-<div class="now-playing">
-    🎵 Yayındaki Eser:
-    <span id="songTitle">Yükleniyor...</span>
-</div>
-
-</div>
-
-<style>
-
-.now-playing{
-    margin-top:20px;
-    padding:15px;
-    border-radius:15px;
-    background:rgba(255,255,255,0.08);
-    font-size:16px;
-    color:#fff;
-    font-weight:500;
-    box-shadow:0 0 15px rgba(255,0,0,0.15);
-}
-
-#songTitle{
-    color:#ff4040;
-    font-weight:700;
-}
-
-</style>
-
-<script>
-
-/*
-  NETYAYIN PLAYING NOW ÇEKME
-*/
-
-async function getNowPlaying() {
-
-    try {
-
-        const proxy =
-            "https://api.allorigins.win/raw?url=";
-
-        const target =
-            encodeURIComponent(
-                "http://yayin.netyayin.net:2828/index.html?sid=1"
-            );
-
-        const response = await fetch(proxy + target);
-
-        const html = await response.text();
-
-        /*
-          Playing Now:
-          kısmını regex ile çekiyoruz
-        */
-
-        const match = html.match(/Playing Now:\s*<\/font>\s*(.*?)\s*<br>/i);
-
-        let title = "Şu anda eser bilgisi yok";
-
-        if(match && match[1]){
-
-            title = match[1]
-                .replace(/<[^>]*>/g, '')
-                .trim();
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        document.getElementById("songTitle").innerText = title;
+        .player-container {
+            background-color: #ffffff;
+            border: 3px solid #ff0000;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 320px;
+        }
 
-    } catch(error){
+        .player-title {
+            color: #ff0000;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        console.log(error);
+        audio {
+            width: 100%;
+            outline: none;
+        }
 
-        document.getElementById("songTitle").innerText =
-            "Eser bilgisi alınamadı";
-    }
-}
+        /* Modern tarayıcılar için audio kontrol renklerini özelleştirme (opsiyonel) */
+        audio::-webkit-media-controls-panel {
+            background-color: #ff0000;
+        }
+        
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #ffffff;
+        }
 
-/* SAYFA AÇILINCA */
-getNowPlaying();
+        .status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
 
-/* HER 15 SANİYEDE GÜNCELLE */
-setInterval(getNowPlaying, 15000);
+<div class="player-container">
+    <div class="player-title">🔴 Canlı Yayın</div>
+    
+    <audio id="radioPlayer" controls>
+        <source src="https://sslyayin.netyayin.net/2828/stream" type="audio/mpeg">
+        Tarayıcınız ses öğesini desteklemiyor.
+    </audio>
 
+    <div class="status">Ses Seviyesi: %75</div>
+</div>
+
+<script>
+    const player = document.getElementById('radioPlayer');
+
+    // Ses seviyesini %75 (0.75) olarak ayarla
+    player.volume = 0.75;
+
+    // Not: Birçok tarayıcı kullanıcı etkileşimi olmadan "autoplay" özelliğine izin vermez.
+    // Ancak ses seviyesi sayfa yüklenir yüklenmez yukarıdaki kodla %75'e sabitlenmiştir.
 </script>
 
 <div class="info">
